@@ -1,0 +1,21 @@
+package com.kosta.finalproject.dto;
+
+
+import java.sql.Date;
+
+import lombok.Data;
+
+@Data
+public class MemberDTO {
+		private Long id;
+		private String memberEmail;
+		private String memberPassword;
+		private String memberName;
+		private Date  memberBirth;
+		private String memberMobile;
+		private String memberLicense;
+		private int memberLike;
+	
+}
+
+

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop-reference-model>
+<aop-project name="demo"/>
+<aop-project name="SpringBootJpaThymeleaf"/>
+<aop-project name="final_project"/>
+<aop-project name="backboard"/>
+</aop-reference-model>

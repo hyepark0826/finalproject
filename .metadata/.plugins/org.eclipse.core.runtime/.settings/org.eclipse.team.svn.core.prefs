@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+externalMigrateFromAuthorizationDatabase/isMigrated=true
+migrateFromAuthorizationDatabase/isMigrated=true
+repositories/5003a99eb623001d1b89d002069867f1=5003a99eb623001d1b89d002069867f1;svn\://43.200.131.72\:3690/myrepo/SpringBootMybatisJsp;svn\://43.200.131.72\:3690/myrepo/SpringBootMybatisJsp;branches;tags;trunk;true;;;;false;;;0
+repositories/70784a457028001d113bee186f1a3cfd=70784a457028001d113bee186f1a3cfd;svn\://43.200.131.72\:3690/myrepo/SpringBootJpaThymeleaf;svn\://43.200.131.72\:3690/myrepo/SpringBootJpaThymeleaf;branches;tags;trunk;true;5893f429-d0b4-4f61-9a17-83057eb1ce58;svn\://43.200.131.72/myrepo;;false;;;0

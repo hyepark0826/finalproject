@@ -1,0 +1,25 @@
+package com.kosta.finalproject.service;
+
+import org.springframework.stereotype.Service;
+
+import com.kosta.finalproject.dto.MemberDTO;
+import com.kosta.finalproject.entity.MemberEntity;
+import com.kosta.finalproject.repository.MemberRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class MemberService {
+	private final MemberRepository memberRepository;
+	
+	public Long save(MemberDTO memberDTO) {
+		
+		//MemberEntity memberEntity = memberRepository.save(MemberEntity.toSaveEntity(memberDTO)); 						
+		MemberEntity memberEntity = MemberEntity.toSaveEntity(memberDTO);
+		Long savedId = memberRepository.save(memberEntity).getId();
+		return savedId;
+		
+	}
+
+}
