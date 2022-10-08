@@ -1,0 +1,105 @@
+package com.kosta.finalproject.controller;
+
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kosta.finalproject.dto.HyeBoardDTO;
+import com.kosta.finalproject.service.FilesService;
+import com.kosta.finalproject.service.HyeBoardService;
+import com.kosta.finalproject.service.MemberService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+//뷰와 모델의 다리역할, 뷰로부터 사용자의 인터랙션을 받아 모델에 전달하고, 
+//바뀐 모델 데이터를 뷰에 다시 전달하여 업데이트함
+
+@Slf4j
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/notice")
+public class NoticeController {
+	
+	private final HyeBoardService hyeBoardService;
+	
+	private final FilesService filesService;
+	
+	@Value("${file.upload.directory}")
+	private String fileUploadPath;
+	
+	//공지사항 목록
+	@GetMapping("/noticeList")
+	public String noticeList() {
+		log.info("공지사항 목록 이동");
+		return "notice/noticeList";
+		
+	}
+
+	//공지사항 등록폼
+	@GetMapping("/noticeWrite")
+	public String noticeWrite() {
+		log.info("공지사항 작성 페이지 이동");
+		return "notice/noticeWrite";
+		
+	}	
+
+	//공지사항 상세보기
+	@GetMapping("/noticeDetail")
+    public String noticeDetail(Model model, HyeBoardDTO hyeBoardDTO, HttpSession session) throws Exception {
+		
+    	log.info("Controller @GetMapping(/notice/noticeDetail) 게시판상세화면 이동 >>>>>>>>>>>>>>> ");
+    	//String writer = (String)session.getAttribute("id");
+
+    	//게시판 정보조회
+    	model.addAttribute("board",hyeBoardService.findByBoardNo(hyeBoardDTO.getBoardNo()));
+    	//파일목록 정보 조회
+    	model.addAttribute("fileList",filesService.filesList(hyeBoardDTO.getBoardNo()));
+    	
+    	return "notice/noticeDetail";
+    }	
+	
+	@PostMapping("/saveNotice")
+	public String saveNotice(HttpServletRequest request, HyeBoardDTO hyeBoardDTO) {
+		
+		log.info("Controller @PostMapping(/saveNotice) 화면에서 넘어온 Dto의 값 : "+hyeBoardDTO.toString());
+		log.info("::::: application.properties 선언한 파일업로드 경로 fileUploadPath >>>>>>>>> "+fileUploadPath);
+		log.info("::::: fileUploadPath :::::: : "+fileUploadPath.toString());
+		
+		try {
+			//1. 게시글 저장 후 게시판번호 가져오기 (※게시판저장 및 파일저장의 사용)
+			Long getBoardId = hyeBoardService.BoardSave(hyeBoardDTO);
+
+			//1.1 게시판번호가 있으면
+			if(getBoardId > 0) {
+				//1-2 파일업로드 서비스 호출
+				if(filesService.fileUpload(hyeBoardDTO.getUpFile(), getBoardId, fileUploadPath, hyeBoardDTO.getDeleteFilesNo())) {
+					//success
+					log.info(":::: 게시판 파일 업로드 완료");
+				}else {
+					//fail
+					log.info(":::: 게시판 파일 업로드 실패");
+				}
+				
+			}else {
+				log.info(":::: 게시판 등록 실패");
+			}
+
+		} catch (Exception e) {
+			//fail
+			e.printStackTrace();
+		}
+
+		return "redirect:/notice/noticeList";   
+		
+	}
+}
