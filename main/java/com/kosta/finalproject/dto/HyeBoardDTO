@@ -1,0 +1,43 @@
+package com.kosta.finalproject.dto;
+
+
+import java.time.LocalDateTime;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.kosta.finalproject.entity.HyeBoardEntity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class HyeBoardDTO{
+	
+	private Long boardNo;
+	private String memberId;	
+	private String boardTitle;
+	private String boardContents;
+	private String boardCategory;
+	private String boardType;
+	private LocalDateTime boardRegdt;
+	private MultipartFile[] upFile; 	//사진파일객체 배열
+	private String[] deleteFilesNo;
+	
+	public static HyeBoardDTO toHyeBoardDTO(HyeBoardEntity hyeBoardEntity) {
+		HyeBoardDTO hyeBoardDTO = new HyeBoardDTO();
+		hyeBoardDTO.setBoardNo(hyeBoardEntity.getBoardNo());
+		hyeBoardDTO.setMemberId(hyeBoardEntity.getMemberId());
+		hyeBoardDTO.setBoardTitle(hyeBoardEntity.getBoardTitle());
+		hyeBoardDTO.setBoardContents(hyeBoardEntity.getBoardContents());
+		hyeBoardDTO.setBoardCategory(hyeBoardEntity.getBoardCategory());
+		hyeBoardDTO.setBoardType(hyeBoardEntity.getBoardType());
+		hyeBoardDTO.setBoardRegdt(hyeBoardEntity.getBoardRegdt());
+		return hyeBoardDTO;
+
+	}
+}
+
+
