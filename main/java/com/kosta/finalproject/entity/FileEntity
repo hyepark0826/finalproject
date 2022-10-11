@@ -1,0 +1,61 @@
+package com.kosta.finalproject.entity;
+
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.kosta.finalproject.dto.FilesDTO;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter@Setter
+@Table(name = "files_table")
+public class FilesEntity {
+	
+	@Id 
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "files_Sequence")
+	@SequenceGenerator(name = "files_Sequence", sequenceName = "FILES_SEQ", initialValue= 1, allocationSize= 1)
+	@Column(name = "files_no")
+	/*코멘트 키*/
+	private Long filesNo;
+	
+	/*파일이 업로드 될 게시판 키*/
+	@Column(name="board_no")
+	private Long boardNo;
+	
+	/*파일명*/	
+	@Column(name="file_name")
+	private String fileName;
+	
+	/*파일저장명*/
+	@Column(name="file_savename")
+	private String fileSavename;
+	
+	/*파일사이즈*/
+	@Column(name="file_size")
+	private Long fileSize;
+	
+	/*파일경로*/
+	@Column(name="file_path", length = 255)
+	private String filePath;
+	
+	public static FilesEntity toSaveEntity(FilesDTO filesDTO) {
+		FilesEntity filesEntity = new FilesEntity();
+		filesEntity.setFilesNo(filesDTO.getFilesNo());
+		filesEntity.setBoardNo(filesDTO.getBoardNo());
+		filesEntity.setFileName(filesDTO.getFileName());
+		filesEntity.setFileSavename(filesDTO.getFileSavename());
+		filesEntity.setFileSize(filesDTO.getFileSize());
+		filesEntity.setFilePath(filesDTO.getFilePath());
+		return filesEntity;
+	}
+}
+
+
