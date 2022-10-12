@@ -1,0 +1,17 @@
+package com.kosta.finalproject.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.kosta.finalproject.entity.FilesEntity;
+
+public interface FilesRepository extends JpaRepository<FilesEntity, Long>{
+	
+	FilesEntity findByFilesNo(String filesNo);
+	
+	FilesEntity deleteByFilesNo(String filesNo);
+
+	List<FilesEntity> findByBoardNo(Long boardNo);
+	
+}
+
