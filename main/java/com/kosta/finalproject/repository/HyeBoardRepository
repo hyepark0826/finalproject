@@ -1,0 +1,16 @@
+package com.kosta.finalproject.repository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.kosta.finalproject.entity.HyeBoardEntity;
+import com.kosta.finalproject.model.Board;
+
+public interface HyeBoardRepository extends JpaRepository<HyeBoardEntity, Long>{
+	
+	
+	//Containing ? %Like% 검색을 뜻한다. 
+	Page<HyeBoardEntity> findByboardTitleContainingOrBoardContentsContaining(String boardtitle, String boardContents, Pageable pageable);
+	
+}
