@@ -1,0 +1,122 @@
+package com.kosta.finalproject.service;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.kosta.finalproject.dto.CommentDTO;
+import com.kosta.finalproject.dto.HyeBoardDTO;
+import com.kosta.finalproject.dto.MemberDTO;
+import com.kosta.finalproject.entity.CommentEntity;
+import com.kosta.finalproject.entity.HyeBoardEntity;
+import com.kosta.finalproject.entity.MemberEntity;
+import com.kosta.finalproject.model.Board;
+import com.kosta.finalproject.repository.CommentRepository;
+import com.kosta.finalproject.repository.HyeBoardRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class HyeBoardService {
+
+	private final HyeBoardRepository hyeBoardRepository;
+
+	/*게시물 목록*/
+	public Page<HyeBoardEntity> boardList(Pageable pageable, String searchKeyword){
+
+		String boardTitle = searchKeyword;
+		String boardContents = searchKeyword;
+		
+		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);		// page는 index 처럼 0부터 시작
+		
+        pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "boardNo"));	// <- Sort 추가
+
+        
+        /*  page = 1 일때 아래의 쿼리를 실행
+	        select * from ( 
+			    select hyeboarden0_.board_no as board_no1_4_
+			    , hyeboarden0_.board_category as board_category2_4_
+			    , hyeboarden0_.board_contents as board_contents3_4_
+			    , hyeboarden0_.board_regdt as board_regdt4_4_
+			    , hyeboarden0_.board_title as board_title5_4_
+			    , hyeboarden0_.board_type as board_type6_4_
+			    , hyeboarden0_.member_id as member_id7_4_ 
+			    from hye_table hyeboarden0_ 
+			    order by hyeboarden0_.board_no desc 
+	    	) 
+	    	where rownum <= 10 
+    	*/
+
+        /*  page = 2 일때 아래의 쿼리를 실행
+			select * from 
+			( 
+			    select row_.*
+			    , rownum rownum_ 
+			    from ( 
+			        select hyeboarden0_.board_no as board_no1_4_
+			        , hyeboarden0_.board_category as board_category2_4_
+			        , hyeboarden0_.board_contents as board_contents3_4_
+			        , hyeboarden0_.board_regdt as board_regdt4_4_
+			        , hyeboarden0_.board_title as board_title5_4_
+			        , hyeboarden0_.board_type as board_type6_4_
+			        , hyeboarden0_.member_id as member_id7_4_ 
+			        from hye_table hyeboarden0_ 
+			        order by hyeboarden0_.board_no desc 
+			    ) row_ 
+			    where rownum <= 20
+			) 
+			where rownum_ > 10 
+    	*/        
+		
+		return hyeBoardRepository.findByboardTitleContainingOrBoardContentsContaining(boardTitle, boardContents, pageable);
+		
+	}	
+	
+	
+	/*게시글 저장*/
+	public Long BoardSave(HyeBoardDTO hyeBoardDTO) {
+		
+		hyeBoardDTO.setBoardRegdt(LocalDateTime.now());
+		
+		HyeBoardEntity hyeBoardEntity = HyeBoardEntity.toSaveEntity(hyeBoardDTO);
+		
+		Long savedId = hyeBoardRepository.save(hyeBoardEntity).getBoardNo();
+		
+		return savedId;
+		
+	}
+
+	
+	/*회원 아이디로 회원정보 조회하기*/
+	public HyeBoardDTO findByBoardNo(Long boardNo) {
+		
+		Optional<HyeBoardEntity> optionalHyeBoardEntity = hyeBoardRepository.findById(boardNo);
+	 
+		if (optionalHyeBoardEntity.isPresent()) {
+			//	 return MemberDTO.toMemberDTO(optionalMemberEntity.get());
+			HyeBoardEntity hyeBoardEntity = optionalHyeBoardEntity.get();
+			
+			HyeBoardDTO hyeBoardDTO = HyeBoardDTO.toHyeBoardDTO(hyeBoardEntity);
+			
+			System.out.println(hyeBoardDTO.toHyeBoardDTO(hyeBoardEntity).toString());
+			
+			
+
+			return hyeBoardDTO;
+		
+		} else {
+			
+			return null;
+		}
+	}	
+	
+}
